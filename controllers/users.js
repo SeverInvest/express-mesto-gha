@@ -20,6 +20,7 @@ module.exports.getUserById = (req, res, next) => {
   if (!ObjectId.isValid(req.params.userId)) {
   // if (!(Number(`0x${req.params.userId}` && [...req.params.userId].length === 24))) {
   // жалко удалять строчку выше... Так красиво получилось))), но наставник подсказала лучший путь)))
+  // удалю после первого ревью
     next(new ValidationError());
     return;
   }

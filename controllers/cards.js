@@ -93,9 +93,6 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .populate('owner')
     .then((card) => {
-      // if (!card) {
-      //   throw new CardNotFoundError();
-      // }
       res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' });
     })
     .catch((error) => {
