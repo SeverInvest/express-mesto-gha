@@ -18,6 +18,9 @@ module.exports.getUserById = (req, res) => {
       throw new UserNotFoundError();
     })
     .then((user) => {
+      if (!user) {
+        throw new UserNotFoundError();
+      }
       res.status(STATUS_OK).send({ data: user });
     })
     .catch((error) => {

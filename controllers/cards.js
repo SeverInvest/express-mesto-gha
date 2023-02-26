@@ -42,6 +42,9 @@ module.exports.likeCard = (req, res) => {
     })
     .populate('owner')
     .then((card) => {
+      if (!card) {
+        throw new CardNotFoundError();
+      }
       res.status(200).send({ data: card });
     })
     .catch((error) => {
@@ -60,6 +63,9 @@ module.exports.dislikeCard = (req, res) => {
     })
     .populate('owner')
     .then((card) => {
+      if (!card) {
+        throw new CardNotFoundError();
+      }
       res.status(200).send({ data: card });
     })
     .catch((error) => {
@@ -78,6 +84,9 @@ module.exports.deleteCard = (req, res) => {
     })
     .populate('owner')
     .then((card) => {
+      if (!card) {
+        throw new CardNotFoundError();
+      }
       res.status(200).send({ data: card, message: 'Карточка удалена' });
     })
     .catch((error) => {
