@@ -38,19 +38,19 @@ module.exports.getUserById = (req, res, next) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   User.create({ ...req.body })
     .then((user) => res.status(STATUS_CREATED).send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        next(new ValidationError());
       } else {
-        res.status(500).send({ message: 'Internal Server Error' });
+        next(new InternalServerError());
       }
     });
 };
 
-module.exports.updateUserInfo = (req, res) => {
+module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(() => {
@@ -61,18 +61,16 @@ module.exports.updateUserInfo = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
-        });
+        next(new ValidationError());
       } else if (error.name === 'UserNotFoundError') {
-        res.status(error.status).send({ message: error.message });
+        next(new UserNotFoundError());
       } else {
-        res.status(500).send({ message: 'Internal Server Error' });
+        next(new InternalServerError());
       }
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => {
@@ -83,13 +81,11 @@ module.exports.updateAvatar = (req, res) => {
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({
-          message: 'Переданы некорректные данные',
-        });
+        next(new ValidationError());
       } else if (error.name === 'UserNotFoundError') {
-        res.status(error.status).send({ message: error.message });
+        next(new UserNotFoundError());
       } else {
-        res.status(500).send({ message: 'Internal Server Error' });
+        next(new InternalServerError());
       }
     });
 };
