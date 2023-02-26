@@ -4,7 +4,7 @@ const path = require('path');
 // const bodyParser = require('body-parser');
 const router = require('./routes/index');
 
-// const defaultError = require('./utils/defaultError');
+const handleError = require('./utils/handleError');
 
 mongoose.set('strictQuery', false);
 
@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 
 app.use(router);
 
-// app.use(defaultError);
+app.use(handleError);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);

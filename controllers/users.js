@@ -1,18 +1,23 @@
-const { STATUS_OK } = require('../utils/statuses');
 const User = require('../models/user');
 const UserNotFoundError = require('../errors/UserNotFoundError');
+const ValidationError = require('../errors/ValidationError');
+const InternalServerError = require('../errors/InternalServerError');
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(STATUS_OK).send({ data: users });
+      res.status(200).send({ data: users });
     })
     .catch(() => {
-      res.status(500).send({ message: 'Internal Server Error' });
+      next(new InternalServerError());
     });
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
+  if (!(Number(`0x${req.params.userId}` && [...req.params.userId].length === 24))) {
+    next(new ValidationError());
+    return;
+  }
   User.findById(req.params.userId)
     .orFail(() => {
       throw new UserNotFoundError();
@@ -21,15 +26,10 @@ module.exports.getUserById = (req, res) => {
       if (!user) {
         throw new UserNotFoundError();
       }
-      res.status(STATUS_OK).send({ data: user });
+      res.status(200).send({ data: user });
     })
     .catch((error) => {
-      console.log(error.name);
-      if (error.name === 'UserNotFoundError') {
-        res.status(error.status).send({ message: error.message });
-      } else {
-        res.status(500).send({ message: 'Internal Server Error' });
-      }
+      next(error);
     });
 };
 

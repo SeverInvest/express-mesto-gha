@@ -2,6 +2,7 @@
 // const BadRequestError = require('../errors/BadRequestError');
 const Cards = require('../models/card');
 const CardNotFoundError = require('../errors/CardNotFoundError');
+const ValidationError = require('../errors/ValidationError');
 // const UserNotFoundError = require('../errors/UserNotFoundError');
 
 module.exports.getCard = (req, res) => {
@@ -31,7 +32,11 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
+  if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+    next(new ValidationError());
+    return;
+  }
   Cards.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -56,7 +61,11 @@ module.exports.likeCard = (req, res) => {
     });
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
+  if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+    next(new ValidationError());
+    return;
+  }
   Cards.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       throw new CardNotFoundError();
@@ -77,7 +86,11 @@ module.exports.dislikeCard = (req, res) => {
     });
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
+  if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+    next(new ValidationError());
+    return;
+  }
   Cards.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
       throw new CardNotFoundError();

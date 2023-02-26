@@ -1,8 +1,8 @@
-class InternalServerError extends Error {
-  constructor(message) {
-    super(message);
-    this.errorMessage = message;
-    this.statusCode = 500;
+const ApplicationError = require('./ApplicationError');
+
+class InternalServerError extends ApplicationError {
+  constructor() {
+    super(500, 'Internal Server Error');
   }
 }
 
