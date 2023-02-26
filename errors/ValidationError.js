@@ -3,7 +3,7 @@ const ApplicationError = require('./ApplicationError');
 
 class ValidationError extends ApplicationError {
   constructor() {
-    super(400, 'Uncorrect data');
+    super(400, 'Incorrect data');
     // this.status = STATUS_NOT_FOUND;
     // this.message = 'User not found';
     // this.name = 'UserNotFoundError';

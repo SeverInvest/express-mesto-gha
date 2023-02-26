@@ -1,4 +1,7 @@
+const { ObjectId } = require('mongoose').Types;
+
 const User = require('../models/user');
+
 const UserNotFoundError = require('../errors/UserNotFoundError');
 const ValidationError = require('../errors/ValidationError');
 const InternalServerError = require('../errors/InternalServerError');
@@ -14,7 +17,9 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  if (!(Number(`0x${req.params.userId}` && [...req.params.userId].length === 24))) {
+  if (!ObjectId.isValid(req.params.userId)) {
+  // if (!(Number(`0x${req.params.userId}` && [...req.params.userId].length === 24))) {
+  // жалко удалять строчку выше... Так красиво получилось))), но наставник подсказала лучший путь)))
     next(new ValidationError());
     return;
   }

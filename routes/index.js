@@ -1,13 +1,13 @@
 const router = require('express').Router();
+const IncorrectPathError = require('../errors/IncorrectPathError');
 
 const routerUsers = require('./users');
 const routerCards = require('./cards');
 
 router.use('/users', routerUsers);
 router.use('/cards', routerCards);
-router.get('/', (req, res) => {
-  console.log(req.params);
-  res.status(200).send({ data: 'Ok' });
+router.use((req, res, next) => {
+  next(new IncorrectPathError());
 });
 
 module.exports = router;
