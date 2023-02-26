@@ -34,7 +34,13 @@ module.exports.getUserById = (req, res, next) => {
       res.status(STATUS_OK).send({ data: user });
     })
     .catch((error) => {
-      next(error);
+      if (error.name === 'ValidationError') {
+        next(new ValidationError());
+      } else if (error instanceof UserNotFoundError) {
+        next(error);
+      } else {
+        next(new InternalServerError());
+      }
     });
 };
 
@@ -62,8 +68,8 @@ module.exports.updateUserInfo = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ValidationError());
-      } else if (error.name === 'UserNotFoundError') {
-        next(new UserNotFoundError());
+      } else if (error instanceof UserNotFoundError) {
+        next(error);
       } else {
         next(new InternalServerError());
       }
@@ -82,8 +88,8 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ValidationError());
-      } else if (error.name === 'UserNotFoundError') {
-        next(new UserNotFoundError());
+      } else if (error instanceof UserNotFoundError) {
+        next(error);
       } else {
         next(new InternalServerError());
       }

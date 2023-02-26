@@ -62,7 +62,8 @@ module.exports.likeCard = (req, res, next) => {
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+  // if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+  if (!ObjectId.isValid(req.params.cardId)) {
     next(new ValidationError());
     return;
   }
@@ -72,22 +73,23 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .populate('owner')
     .then((card) => {
-      if (!card) {
-        throw new CardNotFoundError();
-      }
+      // if (!card) {
+      //   throw new CardNotFoundError();
+      // }
       res.status(STATUS_OK).send({ data: card });
     })
     .catch((error) => {
-      if (error.name === 'CardNotFoundError') {
-        res.status(error.status).send({ message: error.message });
+      if (error instanceof CardNotFoundError) {
+        next(error);
       } else {
-        res.status(500).send({ message: 'Internal Server Error' });
+        next(new InternalServerError());
       }
     });
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+  // if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+  if (!ObjectId.isValid(req.params.cardId)) {
     next(new ValidationError());
     return;
   }
@@ -103,10 +105,10 @@ module.exports.deleteCard = (req, res, next) => {
       res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' });
     })
     .catch((error) => {
-      if (error.name === 'CardNotFoundError') {
-        res.status(error.status).send({ message: error.message });
+      if (error instanceof CardNotFoundError) {
+        next(error);
       } else {
-        res.status(500).send({ message: 'Internal Server Error' });
+        next(new InternalServerError());
       }
     });
 };
