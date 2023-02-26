@@ -1,9 +1,9 @@
-// const { STATUS_NOT_FOUND } = require('../utils/statuses');
+const { STATUS_NOT_FOUND } = require('../utils/statuses');
 const ApplicationError = require('./ApplicationError');
 
 class CardNotFoundError extends ApplicationError {
   constructor() {
-    super(404, 'Card not found');
+    super(STATUS_NOT_FOUND, 'Card not found');
   }
 }
 
