@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 
 const User = require('../models/user');
-
+const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const UserNotFoundError = require('../errors/UserNotFoundError');
 const ValidationError = require('../errors/ValidationError');
 const InternalServerError = require('../errors/InternalServerError');
@@ -9,7 +9,7 @@ const InternalServerError = require('../errors/InternalServerError');
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
-      res.status(200).send({ data: users });
+      res.status(STATUS_OK).send({ data: users });
     })
     .catch(() => {
       next(new InternalServerError());
@@ -28,10 +28,10 @@ module.exports.getUserById = (req, res, next) => {
       throw new UserNotFoundError();
     })
     .then((user) => {
-      if (!user) {
-        throw new UserNotFoundError();
-      }
-      res.status(200).send({ data: user });
+      // if (!user) {
+      //   throw new UserNotFoundError();
+      // }
+      res.status(STATUS_OK).send({ data: user });
     })
     .catch((error) => {
       next(error);
@@ -40,7 +40,7 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = (req, res) => {
   User.create({ ...req.body })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(STATUS_CREATED).send({ data: user }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
@@ -57,7 +57,7 @@ module.exports.updateUserInfo = (req, res) => {
       throw new UserNotFoundError();
     })
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.status(STATUS_OK).send({ data: user });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -79,7 +79,7 @@ module.exports.updateAvatar = (req, res) => {
       throw new UserNotFoundError();
     })
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.status(STATUS_OK).send({ data: user });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
