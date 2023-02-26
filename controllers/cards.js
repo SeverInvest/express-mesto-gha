@@ -1,39 +1,39 @@
-// const ErrorNotFound = require('../errors/ErrorNotFound');
-// const BadRequestError = require('../errors/BadRequestError');
+const { ObjectId } = require('mongoose').Types;
+
 const Cards = require('../models/card');
+const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const CardNotFoundError = require('../errors/CardNotFoundError');
 const ValidationError = require('../errors/ValidationError');
-// const UserNotFoundError = require('../errors/UserNotFoundError');
+const InternalServerError = require('../errors/InternalServerError');
 
-module.exports.getCard = (req, res) => {
+module.exports.getCard = (req, res, next) => {
   Cards.find({})
     .populate('owner')
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.status(STATUS_OK).send(cards))
     .catch(() => {
-      res.status(500).send({ message: 'Internal Server Error' });
+      next(new InternalServerError());
     });
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const ownerId = req.user._id;
   Cards.create({ name, link, owner: ownerId })
     .then((card) => {
-      res
-        .status(201)
-        .send({ data: card });
+      res.status(STATUS_CREATED).send({ data: card });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
+        next(new ValidationError());
       } else {
-        res.status(500).send({ message: 'Internal Server Error' });
+        next(new InternalServerError());
       }
     });
 };
 
 module.exports.likeCard = (req, res, next) => {
-  if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+  // if (!(Number(`0x${req.params.cardId}` && [...req.params.cardId].length === 24))) {
+  if (!ObjectId.isValid(req.params.cardId)) {
     next(new ValidationError());
     return;
   }
@@ -47,16 +47,16 @@ module.exports.likeCard = (req, res, next) => {
     })
     .populate('owner')
     .then((card) => {
-      if (!card) {
-        throw new CardNotFoundError();
-      }
-      res.status(200).send({ data: card });
+      // if (!card) {
+      //   throw new CardNotFoundError();
+      // }
+      res.status(STATUS_OK).send({ data: card });
     })
     .catch((error) => {
-      if (error.name === 'CardNotFoundError') {
-        res.status(error.status).send({ message: error.message });
+      if (error instanceof CardNotFoundError) {
+        next(error);
       } else {
-        res.status(500).send({ message: 'Internal Server Error' });
+        next(new InternalServerError());
       }
     });
 };
@@ -75,7 +75,7 @@ module.exports.dislikeCard = (req, res, next) => {
       if (!card) {
         throw new CardNotFoundError();
       }
-      res.status(200).send({ data: card });
+      res.status(STATUS_OK).send({ data: card });
     })
     .catch((error) => {
       if (error.name === 'CardNotFoundError') {
@@ -100,7 +100,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (!card) {
         throw new CardNotFoundError();
       }
-      res.status(200).send({ data: card, message: 'Карточка удалена' });
+      res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' });
     })
     .catch((error) => {
       if (error.name === 'CardNotFoundError') {
