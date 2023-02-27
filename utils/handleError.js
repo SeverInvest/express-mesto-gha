@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const ValidationError = require('../errors/ValidationError');
-const IncorrectPathError = require('../errors/IncorrectPathError');
 const InternalServerError = require('../errors/InternalServerError');
 const NotFoundError = require('../errors/NotFoundError');
 
@@ -14,8 +13,6 @@ function handleError(error, req, res, next) {
       err = new ValidationError();
       break;
     case error instanceof NotFoundError:
-      break;
-    case error instanceof IncorrectPathError:
       break;
     default:
       err = new InternalServerError();

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const IncorrectPathError = require('../errors/IncorrectPathError');
+const NotFoundError = require('../errors/NotFoundError');
 
 const routerUsers = require('./users');
 const routerCards = require('./cards');
@@ -7,7 +7,7 @@ const routerCards = require('./cards');
 router.use('/users', routerUsers);
 router.use('/cards', routerCards);
 router.use((req, res, next) => {
-  next(new IncorrectPathError());
+  next(new NotFoundError());
 });
 
 module.exports = router;
