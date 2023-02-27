@@ -3,7 +3,7 @@ const ApplicationError = require('./ApplicationError');
 
 class NotFoundError extends ApplicationError {
   constructor() {
-    super(STATUS_NOT_FOUND, 'Card not found');
+    super(STATUS_NOT_FOUND, 'Resource not found');
   }
 }
 
