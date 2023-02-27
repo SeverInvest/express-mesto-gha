@@ -8,7 +8,7 @@ const InternalServerError = require('../errors/InternalServerError');
 
 module.exports.getCard = (req, res, next) => {
   Cards.find({})
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .then((cards) => res.status(STATUS_OK).send(cards))
     .catch(() => {
       next(new InternalServerError());
@@ -46,9 +46,6 @@ module.exports.likeCard = (req, res, next) => {
     })
     .populate('owner')
     .then((card) => {
-      // if (!card) {
-      //   throw new CardNotFoundError();
-      // }
       res.status(STATUS_OK).send({ data: card });
     })
     .catch((error) => {
@@ -69,7 +66,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .orFail(() => {
       throw new CardNotFoundError();
     })
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .then((card) => {
       res.status(STATUS_OK).send({ data: card });
     })
@@ -91,7 +88,7 @@ module.exports.deleteCard = (req, res, next) => {
     .orFail(() => {
       throw new CardNotFoundError();
     })
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .then((card) => {
       res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' });
     })
