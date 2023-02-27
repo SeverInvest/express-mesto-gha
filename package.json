@@ -9,6 +9,7 @@
     "url": "https://github.com/SeverInvest/express-mesto-gha"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.9.2"
   },

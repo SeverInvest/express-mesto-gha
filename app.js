@@ -1,12 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { port } = require('./config');
 const router = require('./routes/index');
 
 const handleError = require('./utils/handleError');
 
 mongoose.set('strictQuery', false);
-
-const { PORT = 3000 } = process.env;
 
 const app = express();
 app.use(express.json());
@@ -23,6 +22,6 @@ app.use(router);
 
 app.use(handleError);
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`); // eslint-disable-line no-console
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`); // eslint-disable-line no-console
 });
