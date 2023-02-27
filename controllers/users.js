@@ -2,7 +2,7 @@ const { ObjectId } = require('mongoose').Types;
 
 const User = require('../models/user');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
-const UserNotFoundError = require('../errors/UserNotFoundError');
+const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
 const InternalServerError = require('../errors/InternalServerError');
 
@@ -23,7 +23,7 @@ module.exports.getUserById = (req, res, next) => {
   }
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new UserNotFoundError();
+      throw new NotFoundError();
     })
     .then((user) => {
       res.status(STATUS_OK).send({ data: user });
@@ -31,7 +31,7 @@ module.exports.getUserById = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ValidationError());
-      } else if (error instanceof UserNotFoundError) {
+      } else if (error instanceof NotFoundError) {
         next(error);
       } else {
         next(new InternalServerError());
@@ -55,7 +55,7 @@ module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(() => {
-      throw new UserNotFoundError();
+      throw new NotFoundError();
     })
     .then((user) => {
       res.status(STATUS_OK).send({ data: user });
@@ -63,7 +63,7 @@ module.exports.updateUserInfo = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ValidationError());
-      } else if (error instanceof UserNotFoundError) {
+      } else if (error instanceof NotFoundError) {
         next(error);
       } else {
         next(new InternalServerError());
@@ -75,7 +75,7 @@ module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => {
-      throw new UserNotFoundError();
+      throw new NotFoundError();
     })
     .then((user) => {
       res.status(STATUS_OK).send({ data: user });
@@ -83,7 +83,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new ValidationError());
-      } else if (error instanceof UserNotFoundError) {
+      } else if (error instanceof NotFoundError) {
         next(error);
       } else {
         next(new InternalServerError());
