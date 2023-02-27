@@ -1,4 +1,4 @@
-const { ObjectId } = require('mongoose').Types;
+const mongoose = require('mongoose');
 
 const User = require('../models/user');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
@@ -17,10 +17,6 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  if (!ObjectId.isValid(req.params.userId)) {
-    next(new ValidationError());
-    return;
-  }
   User.findById(req.params.userId)
     .orFail(() => {
       throw new NotFoundError();
@@ -29,7 +25,7 @@ module.exports.getUserById = (req, res, next) => {
       res.status(STATUS_OK).send({ data: user });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error instanceof mongoose.Error.CastError) {
         next(new ValidationError());
       } else if (error instanceof NotFoundError) {
         next(error);
@@ -43,7 +39,7 @@ module.exports.createUser = (req, res, next) => {
   User.create({ ...req.body })
     .then((user) => res.status(STATUS_CREATED).send({ data: user }))
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error instanceof mongoose.Error.ValidationError) {
         next(new ValidationError());
       } else {
         next(new InternalServerError());
@@ -61,7 +57,7 @@ module.exports.updateUserInfo = (req, res, next) => {
       res.status(STATUS_OK).send({ data: user });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error instanceof mongoose.Error.ValidationError) {
         next(new ValidationError());
       } else if (error instanceof NotFoundError) {
         next(error);
@@ -81,7 +77,7 @@ module.exports.updateAvatar = (req, res, next) => {
       res.status(STATUS_OK).send({ data: user });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error instanceof mongoose.Error.ValidationError) {
         next(new ValidationError());
       } else if (error instanceof NotFoundError) {
         next(error);

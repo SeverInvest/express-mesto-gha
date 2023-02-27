@@ -1,4 +1,5 @@
-const { ObjectId } = require('mongoose').Types;
+// const { ObjectId } = require('mongoose').Types;
+const mongoose = require('mongoose');
 
 const Cards = require('../models/card');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
@@ -23,7 +24,7 @@ module.exports.createCard = (req, res, next) => {
       res.status(STATUS_CREATED).send({ data: card });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error instanceof mongoose.Error.ValidationError) {
         next(new ValidationError());
       } else {
         next(new InternalServerError());
@@ -32,10 +33,10 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.likeCard = (req, res, next) => {
-  if (!ObjectId.isValid(req.params.cardId)) {
-    next(new ValidationError());
-    return;
-  }
+  // if (!ObjectId.isValid(req.params.cardId)) {
+  //   next(new ValidationError());
+  //   return;
+  // }
   Cards.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -51,6 +52,8 @@ module.exports.likeCard = (req, res, next) => {
     .catch((error) => {
       if (error instanceof NotFoundError) {
         next(error);
+      } else if (error instanceof mongoose.Error.CastError) {
+        next(new ValidationError());
       } else {
         next(new InternalServerError());
       }
@@ -58,10 +61,10 @@ module.exports.likeCard = (req, res, next) => {
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  if (!ObjectId.isValid(req.params.cardId)) {
-    next(new ValidationError());
-    return;
-  }
+  // if (!ObjectId.isValid(req.params.cardId)) {
+  //   next(new ValidationError());
+  //   return;
+  // }
   Cards.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       throw new NotFoundError();
@@ -73,6 +76,8 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((error) => {
       if (error instanceof NotFoundError) {
         next(error);
+      } else if (error instanceof mongoose.Error.CastError) {
+        next(new ValidationError());
       } else {
         next(new InternalServerError());
       }
@@ -80,10 +85,10 @@ module.exports.dislikeCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  if (!ObjectId.isValid(req.params.cardId)) {
-    next(new ValidationError());
-    return;
-  }
+  // if (!ObjectId.isValid(req.params.cardId)) {
+  //   next(new ValidationError());
+  //   return;
+  // }
   Cards.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
       throw new NotFoundError();
@@ -95,6 +100,8 @@ module.exports.deleteCard = (req, res, next) => {
     .catch((error) => {
       if (error instanceof NotFoundError) {
         next(error);
+      } else if (error instanceof mongoose.Error.CastError) {
+        next(new ValidationError());
       } else {
         next(new InternalServerError());
       }
