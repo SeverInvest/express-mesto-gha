@@ -1,19 +1,19 @@
-// const { ObjectId } = require('mongoose').Types;
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
 const Cards = require('../models/card');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const NotFoundError = require('../errors/NotFoundError');
-const ValidationError = require('../errors/ValidationError');
-const InternalServerError = require('../errors/InternalServerError');
+// const ValidationError = require('../errors/ValidationError');
+// const InternalServerError = require('../errors/InternalServerError');
 
 module.exports.getCard = (req, res, next) => {
   Cards.find({})
     .populate(['owner', 'likes'])
     .then((cards) => res.status(STATUS_OK).send(cards))
-    .catch(() => {
-      next(new InternalServerError());
-    });
+    .catch(next);
+  // .catch(() => {
+  //   next(new InternalServerError());
+  // });
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -23,20 +23,17 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => {
       res.status(STATUS_CREATED).send({ data: card });
     })
-    .catch((error) => {
-      if (error instanceof mongoose.Error.ValidationError) {
-        next(new ValidationError());
-      } else {
-        next(new InternalServerError());
-      }
-    });
+    .catch(next);
+  // .catch((error) => {
+  //   if (error instanceof mongoose.Error.ValidationError) {
+  //     next(new ValidationError());
+  //   } else {
+  //     next(new InternalServerError());
+  //   }
+  // });
 };
 
 module.exports.likeCard = (req, res, next) => {
-  // if (!ObjectId.isValid(req.params.cardId)) {
-  //   next(new ValidationError());
-  //   return;
-  // }
   Cards.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -49,22 +46,19 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => {
       res.status(STATUS_OK).send({ data: card });
     })
-    .catch((error) => {
-      if (error instanceof NotFoundError) {
-        next(error);
-      } else if (error instanceof mongoose.Error.CastError) {
-        next(new ValidationError());
-      } else {
-        next(new InternalServerError());
-      }
-    });
+    .catch(next);
+  // .catch((error) => {
+  //   if (error instanceof NotFoundError) {
+  //     next(error);
+  //   } else if (error instanceof mongoose.Error.CastError) {
+  //     next(new ValidationError());
+  //   } else {
+  //     next(new InternalServerError());
+  //   }
+  // });
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  // if (!ObjectId.isValid(req.params.cardId)) {
-  //   next(new ValidationError());
-  //   return;
-  // }
   Cards.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
       throw new NotFoundError();
@@ -73,22 +67,19 @@ module.exports.dislikeCard = (req, res, next) => {
     .then((card) => {
       res.status(STATUS_OK).send({ data: card });
     })
-    .catch((error) => {
-      if (error instanceof NotFoundError) {
-        next(error);
-      } else if (error instanceof mongoose.Error.CastError) {
-        next(new ValidationError());
-      } else {
-        next(new InternalServerError());
-      }
-    });
+    .catch(next);
+  // .catch((error) => {
+  //   if (error instanceof NotFoundError) {
+  //     next(error);
+  //   } else if (error instanceof mongoose.Error.CastError) {
+  //     next(new ValidationError());
+  //   } else {
+  //     next(new InternalServerError());
+  //   }
+  // });
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  // if (!ObjectId.isValid(req.params.cardId)) {
-  //   next(new ValidationError());
-  //   return;
-  // }
   Cards.findByIdAndRemove(req.params.cardId)
     .orFail(() => {
       throw new NotFoundError();
@@ -97,13 +88,14 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' });
     })
-    .catch((error) => {
-      if (error instanceof NotFoundError) {
-        next(error);
-      } else if (error instanceof mongoose.Error.CastError) {
-        next(new ValidationError());
-      } else {
-        next(new InternalServerError());
-      }
-    });
+    .catch(next);
+  // .catch((error) => {
+  //   if (error instanceof NotFoundError) {
+  //     next(error);
+  //   } else if (error instanceof mongoose.Error.CastError) {
+  //     next(new ValidationError());
+  //   } else {
+  //     next(new InternalServerError());
+  //   }
+  // });
 };
