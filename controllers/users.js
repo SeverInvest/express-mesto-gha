@@ -1,10 +1,6 @@
-// const mongoose = require('mongoose');
-
 const User = require('../models/user');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const NotFoundError = require('../errors/NotFoundError');
-// const ValidationError = require('../errors/ValidationError');
-// const InternalServerError = require('../errors/InternalServerError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -12,9 +8,6 @@ module.exports.getUsers = (req, res, next) => {
       res.status(STATUS_OK).send({ data: users });
     })
     .catch(next);
-  // .catch(() => {
-  //   next(new InternalServerError());
-  // });
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -26,28 +19,12 @@ module.exports.getUserById = (req, res, next) => {
       res.status(STATUS_OK).send({ data: user });
     })
     .catch(next);
-  // .catch((error) => {
-  //   if (error instanceof mongoose.Error.CastError) {
-  //     next(new ValidationError());
-  //   } else if (error instanceof NotFoundError) {
-  //     next(error);
-  //   } else {
-  //     next(new InternalServerError());
-  //   }
-  // });
 };
 
 module.exports.createUser = (req, res, next) => {
   User.create({ ...req.body })
     .then((user) => res.status(STATUS_CREATED).send({ data: user }))
     .catch(next);
-  // .catch((error) => {
-  //   if (error instanceof mongoose.Error.ValidationError) {
-  //     next(new ValidationError());
-  //   } else {
-  //     next(new InternalServerError());
-  //   }
-  // });
 };
 
 module.exports.updateUserInfo = (req, res, next) => {
@@ -60,15 +37,6 @@ module.exports.updateUserInfo = (req, res, next) => {
       res.status(STATUS_OK).send({ data: user });
     })
     .catch(next);
-  // .catch((error) => {
-  //   if (error instanceof mongoose.Error.ValidationError) {
-  //     next(new ValidationError());
-  //   } else if (error instanceof NotFoundError) {
-  //     next(error);
-  //   } else {
-  //     next(new InternalServerError());
-  //   }
-  // });
 };
 
 module.exports.updateAvatar = (req, res, next) => {
@@ -81,13 +49,4 @@ module.exports.updateAvatar = (req, res, next) => {
       res.status(STATUS_OK).send({ data: user });
     })
     .catch(next);
-  // .catch((error) => {
-  //   if (error instanceof mongoose.Error.ValidationError) {
-  //     next(new ValidationError());
-  //   } else if (error instanceof NotFoundError) {
-  //     next(error);
-  //   } else {
-  //     next(new InternalServerError());
-  //   }
-  // });
 };
