@@ -1,22 +1,23 @@
 const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+
 const { port } = require('./config');
 const router = require('./routes/index');
 
-const handleError = require('./utils/handleError');
+const handleError = require('./middlewares/handleError');
 
 mongoose.set('strictQuery', false);
 
 const app = express();
+app.use(helmet());
+app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 mongoose.connect('mongodb://127.0.0.1/mestodb');
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '63f51333f328ac226f126b20',
-  };
-  next();
-});
+app.use(cookieParser());
 
 app.use(router);
 
