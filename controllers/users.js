@@ -8,7 +8,7 @@ const { nodeEnv, jwtSecret } = require('../config');
 module.exports.getUsers = (_, res, next) => {
   User.find({}, { name: 1, about: 1, avatar: 1 })
     .then((users) => {
-      res.status(STATUS_OK).send(users);
+      res.status(STATUS_OK).send({ data: users });
     })
     .catch(next);
 };
