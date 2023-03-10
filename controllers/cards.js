@@ -1,6 +1,7 @@
 const Cards = require('../models/card');
 const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 module.exports.getCard = (req, res, next) => {
   Cards.find({})
@@ -48,13 +49,18 @@ module.exports.dislikeCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Cards.findByIdAndRemove(req.params.cardId)
+  Cards.findById(req.params.cardId)
     .orFail(() => {
       throw new NotFoundError();
     })
     .populate(['owner', 'likes'])
     .then((card) => {
-      res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' });
+      if (card.owner === req.user._id) {
+        Cards.findByIdAndRemove(req.params.cardId)
+          .then(() => res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' }));
+      } else {
+        throw new ForbiddenError();
+      }
     })
     .catch(next);
 };
