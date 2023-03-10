@@ -5,6 +5,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const NecessaryAuthorizationError = require('../errors/NecessaryAuthorizationError');
 const ConflictedError = require('../errors/ConflictedError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 function handleError(error, req, res, next) {
   let err = error;
@@ -24,6 +25,8 @@ function handleError(error, req, res, next) {
     case error instanceof NotFoundError:
       break;
     case error instanceof NecessaryAuthorizationError:
+      break;
+    case error instanceof ForbiddenError:
       break;
     case error instanceof UnauthorizedError:
       break;
