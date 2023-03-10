@@ -21,7 +21,7 @@ mongoose.connect(addressDB);
 app.use(cookieParser());
 
 app.use(router);
-app.use(errors);
+app.use(errors());
 app.use(handleError);
 
 app.listen(port, () => {
