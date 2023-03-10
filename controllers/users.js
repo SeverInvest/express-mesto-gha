@@ -6,7 +6,12 @@ const NotFoundError = require('../errors/NotFoundError');
 const { nodeEnv, jwtSecret } = require('../config');
 
 module.exports.getUsers = (_, res, next) => {
-  User.find({}, { name: 1, about: 1, avatar: 1 })
+  User.find({}, {
+    email: 1,
+    name: 1,
+    about: 1,
+    avatar: 1,
+  })
     .then((users) => {
       res.status(STATUS_OK).send({ data: users });
     })
