@@ -3,6 +3,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 
 const { port, addressCors, addressDB } = require('./config');
 const router = require('./routes/index');
@@ -20,7 +21,7 @@ mongoose.connect(addressDB);
 app.use(cookieParser());
 
 app.use(router);
-
+app.use(errors);
 app.use(handleError);
 
 app.listen(port, () => {
