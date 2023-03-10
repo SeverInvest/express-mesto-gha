@@ -55,8 +55,8 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .populate(['owner', 'likes'])
     .then((card) => {
-      if (card.owner === req.user._id) {
-        Cards.findByIdAndRemove(req.params.cardId)
+      if (card.owner.toString() === req.user._id) {
+        Cards.deleteOne(card)
           .then(() => res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' }));
       } else {
         throw new ForbiddenError();
