@@ -4,7 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
-const { port } = require('./config');
+const { port, addressCors, addressDB } = require('./config');
 const router = require('./routes/index');
 
 const handleError = require('./middlewares/handleError');
@@ -13,9 +13,9 @@ mongoose.set('strictQuery', false);
 
 const app = express();
 app.use(helmet());
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: addressCors }));
 app.use(express.json());
-mongoose.connect('mongodb://127.0.0.1/mestodb');
+mongoose.connect(addressDB);
 
 app.use(cookieParser());
 

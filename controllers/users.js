@@ -15,6 +15,25 @@ module.exports.getUsers = (_, res, next) => {
     .catch(next);
 };
 
+module.exports.getCurrentUser = (req, res, next) => {
+  const { _id } = req.user;
+
+  User.findById(_id)
+    .orFail(() => {
+      throw new NotFoundError();
+    })
+    .then((user) => {
+      res.send({
+        _id: user.id,
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      });
+    })
+    .catch(next);
+};
+
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
@@ -99,6 +118,7 @@ module.exports.login = (req, res, next) => {
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
+          sameSite: true,
         })
         .status(STATUS_OK)
         .send({ token });

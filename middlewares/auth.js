@@ -3,13 +3,18 @@ const NecessaryAuthorizationError = require('../errors/UnauthorizedError');
 const { nodeEnv, jwtSecret } = require('../config');
 
 module.exports = (req, _, next) => {
-  const { authorization } = req.headers;
+  let token;
 
-  if (!authorization || !authorization.startsWith('Bearer')) {
-    throw new NecessaryAuthorizationError();
+  if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  } else {
+    const { authorization } = req.headers;
+    if (!authorization || !authorization.startsWith('Bearer')) {
+      throw new NecessaryAuthorizationError();
+    }
+    token = authorization.replace('Bearer ', '');
   }
 
-  const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
