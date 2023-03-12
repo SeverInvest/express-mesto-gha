@@ -18,6 +18,17 @@ function searchUserById(id, res, next) {
     .catch(next);
 }
 
+function updateUser(userId, values, res, next) {
+  User.findByIdAndUpdate(userId, values, { new: true, runValidators: true })
+    .orFail(() => {
+      throw new NotFoundError('Resource not found');
+    })
+    .then((user) => {
+      res.status(STATUS_OK).send(user);
+    })
+    .catch(next);
+}
+
 module.exports.getUsers = (_, res, next) => {
   User.find()
     .then((users) => {
@@ -59,26 +70,12 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.updateUserInfo = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .orFail(() => {
-      throw new NotFoundError('Resource not found');
-    })
-    .then((user) => {
-      res.status(STATUS_OK).send(user);
-    })
-    .catch(next);
+  updateUser(req.user._id, { name, about }, res, next);
 };
 
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .orFail(() => {
-      throw new NotFoundError('Resource not found');
-    })
-    .then((user) => {
-      res.status(STATUS_OK).send(user);
-    })
-    .catch(next);
+  updateUser(req.user._id, { avatar }, res, next);
 };
 
 module.exports.login = (req, res, next) => {
