@@ -12,7 +12,7 @@ router.use(auth);
 router.use('/users', routerUsers);
 router.use('/cards', routerCards);
 router.use((_, res, next) => {
-  next(new NotFoundError());
+  next(new NotFoundError('Resource not found'));
 });
 
 module.exports = router;

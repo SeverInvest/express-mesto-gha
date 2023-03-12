@@ -27,7 +27,7 @@ module.exports.likeCard = (req, res, next) => {
     { new: true },
   )
     .orFail(() => {
-      throw new NotFoundError();
+      throw new NotFoundError('Resource not found');
     })
     .populate(['owner', 'likes'])
     .then((card) => {
@@ -39,7 +39,7 @@ module.exports.likeCard = (req, res, next) => {
 module.exports.dislikeCard = (req, res, next) => {
   Cards.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => {
-      throw new NotFoundError();
+      throw new NotFoundError('Resource not found');
     })
     .populate(['owner', 'likes'])
     .then((card) => {
@@ -51,7 +51,7 @@ module.exports.dislikeCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Cards.findById(req.params.cardId)
     .orFail(() => {
-      throw new NotFoundError();
+      throw new NotFoundError('Resource not found');
     })
     .then((card) => {
       if (card.owner.toString() === req.user._id) {
@@ -59,7 +59,7 @@ module.exports.deleteCard = (req, res, next) => {
           .then(() => res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' }))
           .catch(next);
       } else {
-        throw new ForbiddenError();
+        throw new ForbiddenError('Access to execution is forbidden');
       }
     })
     .catch(next);

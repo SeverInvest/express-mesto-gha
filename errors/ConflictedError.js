@@ -2,9 +2,12 @@ const { STATUS_CONFLICTED } = require('../utils/statuses');
 const ApplicationError = require('./ApplicationError');
 
 class ConflictedError extends ApplicationError {
-  constructor() {
-    super(STATUS_CONFLICTED, 'Such a user already exists');
+  constructor(message) {
+    super();
+    this.status = STATUS_CONFLICTED;
+    this.message = message;
   }
 }
+// 'Such a user already exists'
 
 module.exports = ConflictedError;
