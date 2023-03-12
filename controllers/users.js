@@ -5,29 +5,8 @@ const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const NotFoundError = require('../errors/NotFoundError');
 const { nodeEnv, jwtSecret } = require('../config');
 
-module.exports.getUsers = (_, res, next) => {
-  User.find()
-    .then((users) => {
-      res.status(STATUS_OK).send({ data: users });
-    })
-    .catch(next);
-};
-
-module.exports.getCurrentUser = (req, res, next) => {
-  const { _id } = req.user;
-
-  User.findById(_id)
-    .orFail(() => {
-      throw new NotFoundError('Resource not found');
-    })
-    .then((user) => {
-      res.send(user);
-    })
-    .catch(next);
-};
-
-module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
+function commonSearchUserById(id, res, next) {
+  User.findById(id)
     .orFail(() => {
       throw new NotFoundError('Resource not found');
     })
@@ -37,6 +16,45 @@ module.exports.getUserById = (req, res, next) => {
         .send(user);
     })
     .catch(next);
+}
+
+module.exports.getUsers = (_, res, next) => {
+  User.find()
+    .then((users) => {
+      res
+        .status(STATUS_OK)
+        .send({ data: users });
+    })
+    .catch(next);
+};
+
+module.exports.getCurrentUser = (req, res, next) => {
+  const { _id } = req.user;
+  commonSearchUserById(_id, res, next);
+  //   User.findById(_id)
+  //     .orFail(() => {
+  //       throw new NotFoundError('Resource not found');
+  //     })
+  //     .then((user) => {
+  //       res
+  //         .status(STATUS_OK)
+  //         .send(user);
+  //     })
+  //     .catch(next);
+};
+
+module.exports.getUserById = (req, res, next) => {
+  commonSearchUserById(req.params.userId, res, next);
+  // User.findById(req.params.userId)
+  //   .orFail(() => {
+  //     throw new NotFoundError('Resource not found');
+  //   })
+  //   .then((user) => {
+  //     res
+  //       .status(STATUS_OK)
+  //       .send(user);
+  //   })
+  //   .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
