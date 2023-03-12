@@ -3,6 +3,22 @@ const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
+function searchCardAndUpdate(cardId, method, res, next) {
+  Cards.findByIdAndUpdate(
+    cardId,
+    method,
+    { new: true },
+  )
+    .orFail(() => {
+      throw new NotFoundError('Resource not found');
+    })
+    .populate(['owner', 'likes'])
+    .then((card) => {
+      res.status(STATUS_OK).send({ data: card });
+    })
+    .catch(next);
+}
+
 module.exports.getCard = (req, res, next) => {
   Cards.find({})
     .populate(['owner', 'likes'])
@@ -21,31 +37,37 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.likeCard = (req, res, next) => {
-  Cards.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
-    .orFail(() => {
-      throw new NotFoundError('Resource not found');
-    })
-    .populate(['owner', 'likes'])
-    .then((card) => {
-      res.status(STATUS_OK).send({ data: card });
-    })
-    .catch(next);
+  searchCardAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, res, next);
+  // Cards.findByIdAndUpdate(
+  //   req.params.cardId,
+  //   { $addToSet: { likes: req.user._id } },
+  //   { new: true },
+  // )
+  //   .orFail(() => {
+  //     throw new NotFoundError('Resource not found');
+  //   })
+  //   .populate(['owner', 'likes'])
+  //   .then((card) => {
+  //     res.status(STATUS_OK).send({ data: card });
+  //   })
+  //   .catch(next);
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  Cards.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .orFail(() => {
-      throw new NotFoundError('Resource not found');
-    })
-    .populate(['owner', 'likes'])
-    .then((card) => {
-      res.status(STATUS_OK).send({ data: card });
-    })
-    .catch(next);
+  searchCardAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, res, next);
+  // Cards.findByIdAndUpdate(
+  //   req.params.cardId,
+  //   { $pull: { likes: req.user._id } },
+  //   { new: true },
+  // )
+  //   .orFail(() => {
+  //     throw new NotFoundError('Resource not found');
+  //   })
+  //   .populate(['owner', 'likes'])
+  //   .then((card) => {
+  //     res.status(STATUS_OK).send({ data: card });
+  //   })
+  //   .catch(next);
 };
 
 module.exports.deleteCard = (req, res, next) => {

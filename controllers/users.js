@@ -5,7 +5,7 @@ const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const NotFoundError = require('../errors/NotFoundError');
 const { nodeEnv, jwtSecret } = require('../config');
 
-function commonSearchUserById(id, res, next) {
+function searchUserById(id, res, next) {
   User.findById(id)
     .orFail(() => {
       throw new NotFoundError('Resource not found');
@@ -29,11 +29,11 @@ module.exports.getUsers = (_, res, next) => {
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
-  commonSearchUserById(req.user._id, res, next);
+  searchUserById(req.user._id, res, next);
 };
 
 module.exports.getUserById = (req, res, next) => {
-  commonSearchUserById(req.params.userId, res, next);
+  searchUserById(req.params.userId, res, next);
 };
 
 module.exports.createUser = (req, res, next) => {
