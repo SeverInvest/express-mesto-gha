@@ -29,32 +29,11 @@ module.exports.getUsers = (_, res, next) => {
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
-  const { _id } = req.user;
-  commonSearchUserById(_id, res, next);
-  //   User.findById(_id)
-  //     .orFail(() => {
-  //       throw new NotFoundError('Resource not found');
-  //     })
-  //     .then((user) => {
-  //       res
-  //         .status(STATUS_OK)
-  //         .send(user);
-  //     })
-  //     .catch(next);
+  commonSearchUserById(req.user._id, res, next);
 };
 
 module.exports.getUserById = (req, res, next) => {
   commonSearchUserById(req.params.userId, res, next);
-  // User.findById(req.params.userId)
-  //   .orFail(() => {
-  //     throw new NotFoundError('Resource not found');
-  //   })
-  //   .then((user) => {
-  //     res
-  //       .status(STATUS_OK)
-  //       .send(user);
-  //   })
-  //   .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
