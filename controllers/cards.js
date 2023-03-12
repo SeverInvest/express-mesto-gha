@@ -29,7 +29,7 @@ module.exports.likeCard = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError();
     })
-    .populate('owner')
+    .populate(['owner', 'likes'])
     .then((card) => {
       res.status(STATUS_OK).send({ data: card });
     })
@@ -53,12 +53,11 @@ module.exports.deleteCard = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError();
     })
-    // .populate(['owner', 'likes'])
     .then((card) => {
-      console.log(card.owner.toString());
       if (card.owner.toString() === req.user._id) {
         Cards.deleteOne(card)
-          .then(() => res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' }));
+          .then(() => res.status(STATUS_OK).send({ data: card, message: 'Карточка удалена' }))
+          .catch(next);
       } else {
         throw new ForbiddenError();
       }

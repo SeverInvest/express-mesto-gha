@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const isURL = require('validator/lib/isURL');
 
 mongoose.set('strictQuery', false);
 
@@ -12,6 +13,10 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: (url) => isURL(url),
+      message: 'incorrect link format',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

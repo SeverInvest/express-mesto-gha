@@ -6,12 +6,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const { nodeEnv, jwtSecret } = require('../config');
 
 module.exports.getUsers = (_, res, next) => {
-  User.find({}, {
-    email: 1,
-    name: 1,
-    about: 1,
-    avatar: 1,
-  })
+  User.find()
     .then((users) => {
       res.status(STATUS_OK).send({ data: users });
     })
@@ -26,13 +21,7 @@ module.exports.getCurrentUser = (req, res, next) => {
       throw new NotFoundError();
     })
     .then((user) => {
-      res.send({
-        _id: user.id,
-        email: user.email,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      });
+      res.send(user);
     })
     .catch(next);
 };
@@ -45,12 +34,7 @@ module.exports.getUserById = (req, res, next) => {
     .then((user) => {
       res
         .status(STATUS_OK)
-        .send({
-          _id: user.id,
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-        });
+        .send(user);
     })
     .catch(next);
 };
@@ -64,13 +48,15 @@ module.exports.createUser = (req, res, next) => {
       about: req.body.about,
       avatar: req.body.avatar,
     }))
-    .then((user) => res.status(STATUS_CREATED).send({
-      email: user.email,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      _id: user._id,
-    }))
+    .then((user) => res.status(STATUS_CREATED).send(
+      {
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        _id: user._id,
+      },
+    ))
     .catch(next);
 };
 
@@ -81,12 +67,7 @@ module.exports.updateUserInfo = (req, res, next) => {
       throw new NotFoundError();
     })
     .then((user) => {
-      res.status(STATUS_OK).send({
-        _id: user.id,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      });
+      res.status(STATUS_OK).send(user);
     })
     .catch(next);
 };
@@ -98,12 +79,7 @@ module.exports.updateAvatar = (req, res, next) => {
       throw new NotFoundError();
     })
     .then((user) => {
-      res.status(STATUS_OK).send({
-        _id: user.id,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      });
+      res.status(STATUS_OK).send(user);
     })
     .catch(next);
 };

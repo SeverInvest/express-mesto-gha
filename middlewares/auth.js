@@ -10,7 +10,7 @@ module.exports = (req, _, next) => {
   } else {
     const { authorization } = req.headers;
     if (!authorization || !authorization.startsWith('Bearer')) {
-      throw new NecessaryAuthorizationError();
+      next(new NecessaryAuthorizationError());
     }
     token = authorization.replace('Bearer ', '');
   }
