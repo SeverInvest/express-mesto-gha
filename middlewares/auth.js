@@ -3,12 +3,15 @@ const UnauthorizedError = require('../errors/UnauthorizedError');
 const { nodeEnv, jwtSecret } = require('../config');
 
 module.exports = (req, _, next) => {
-  const token = req.cookies.jwt;
   let payload;
-
-  try {
-    payload = jwt.verify(token, nodeEnv === 'production' && jwtSecret);
-  } catch (err) {
+  if (req.cookies.jwt) {
+    try {
+      payload = jwt.verify(req.cookies.jwt, nodeEnv === 'production' && jwtSecret);
+    } catch (err) {
+      next(new UnauthorizedError('Needed authorization'));
+      return;
+    }
+  } else {
     next(new UnauthorizedError('Needed authorization'));
     return;
   }
