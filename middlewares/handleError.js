@@ -15,6 +15,8 @@ function handleError(error, _, res, next) {
     httpError = new ConflictedError('Such a user already exists');
   } else if (error instanceof ApplicationError) {
     httpError = error;
+  } else if (error instanceof mongoose.Error.ValidationError) {
+    httpError = new ValidationError(error.message);
   }
 
   res.status(httpError.status).send({ message: httpError.message });
