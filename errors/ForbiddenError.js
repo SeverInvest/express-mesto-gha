@@ -3,9 +3,8 @@ const ApplicationError = require('./ApplicationError');
 
 class ForbiddenError extends ApplicationError {
   constructor(message) {
-    super();
+    super(message);
     this.status = STATUS_FORBIDDEN_ERROR;
-    this.message = message;
   }
 }
 // 'Access to execution is forbidden'

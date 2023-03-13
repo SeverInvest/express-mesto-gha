@@ -94,8 +94,7 @@ module.exports.login = (req, res, next) => {
           sameSite: true,
         })
         .status(STATUS_OK)
-        .send({ message: 'Вы успешно авторизовались' });
-      // .send({ token });
+        .send({ message: 'Successfully logging in' });
     })
     .catch(next);
 };

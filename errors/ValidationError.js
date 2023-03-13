@@ -3,9 +3,8 @@ const ApplicationError = require('./ApplicationError');
 
 class ValidationError extends ApplicationError {
   constructor(message) {
-    super();
+    super(message);
     this.status = STATUS_BAD_REQUEST;
-    this.message = message;
   }
 }
 //  'Incorrect data'

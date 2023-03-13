@@ -3,9 +3,8 @@ const ApplicationError = require('./ApplicationError');
 
 class NotFoundError extends ApplicationError {
   constructor(message) {
-    super();
+    super(message);
     this.status = STATUS_NOT_FOUND;
-    this.message = message;
   }
 }
 // 'Resource not found'

@@ -3,9 +3,8 @@ const ApplicationError = require('./ApplicationError');
 
 class UnauthorizedError extends ApplicationError {
   constructor(message) {
-    super();
+    super(message);
     this.status = STATUS_UNAUTHORIZED_ERROR;
-    this.message = message;
   }
 }
 // 'Incorrect password or email'

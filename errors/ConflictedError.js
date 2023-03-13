@@ -3,9 +3,8 @@ const ApplicationError = require('./ApplicationError');
 
 class ConflictedError extends ApplicationError {
   constructor(message) {
-    super();
+    super(message);
     this.status = STATUS_CONFLICTED;
-    this.message = message;
   }
 }
 // 'Such a user already exists'
