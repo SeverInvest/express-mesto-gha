@@ -5,8 +5,8 @@ const { STATUS_OK, STATUS_CREATED } = require('../utils/statuses');
 const NotFoundError = require('../errors/NotFoundError');
 const { nodeEnv, jwtSecret } = require('../config');
 
-function searchUserById(id, res, next) {
-  User.findById(id)
+function searchUserById(userId, res, next) {
+  User.findById(userId)
     .orFail(() => {
       throw new NotFoundError('Resource not found');
     })
@@ -94,7 +94,8 @@ module.exports.login = (req, res, next) => {
           sameSite: true,
         })
         .status(STATUS_OK)
-        .send({ token });
+        .send({ message: 'Вы успешно авторизовались' });
+      // .send({ token });
     })
     .catch(next);
 };
