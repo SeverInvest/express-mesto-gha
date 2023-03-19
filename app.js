@@ -4,7 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { port, addressCors, addressDB } = require('./config');
 const router = require('./routes/index');
 
@@ -19,8 +19,9 @@ app.use(express.json());
 mongoose.connect(addressDB);
 
 app.use(cookieParser());
-
+app.use(requestLogger);
 app.use(router);
+app.use(errorLogger);
 app.use(errors());
 app.use(handleError);
 
